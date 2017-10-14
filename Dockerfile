@@ -1,4 +1,4 @@
-FROM opsbears/base:stable
+FROM opsbears/base:16.04
 
 RUN apt-get -y install supervisor && mkdir -p /etc/supervisor && mkdir -p /etc/supervisor/conf.d
 
