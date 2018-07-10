@@ -35,7 +35,7 @@ workflows:
           context: docker
     triggers:
       - schedule:
-          cron: "20 0 * * *"
+          cron: "10 0 * * *"
           filters:
             branches:
               only:
@@ -54,7 +54,7 @@ workflows:
           context: docker
     triggers:
       - schedule:
-          cron: "20 0 * * *"
+          cron: "10 0 * * *"
           filters:
             branches:
               only:
