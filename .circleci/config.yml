@@ -1,0 +1,61 @@
+version: 2
+jobs:
+  build-1604:
+    machine:
+      docker_layer_caching: false
+    steps:
+      - checkout
+      - run: docker build -t opsbears/supervisord:16.04 ./16.04/
+      - run: echo $DOCKER_HUB_PASSWORD | docker login --username $DOCKER_HUB_USERNAME --password-stdin
+      - run: docker push opsbears/supervisord:16.04
+  build-1804:
+    machine:
+      docker_layer_caching: false
+    steps:
+      - checkout
+      - run: docker build -t opsbears/supervisord:18.04 ./18.04/
+      - run: docker build -t opsbears/supervisord:latest ./18.04/
+      - run: echo $DOCKER_HUB_PASSWORD | docker login --username $DOCKER_HUB_USERNAME --password-stdin
+      - run: docker tag opsbears/supervisord:18.04 opsbears/supervisord:latest
+      - run: docker push opsbears/supervisord:18.04
+      - run: docker push opsbears/supervisord:latest
+workflows:
+  version: 2
+  push-16.04:
+    jobs:
+      - build-1604:
+          context: docker
+          filters:
+            branches:
+              only:
+                - master
+  daily-16.04:
+    jobs:
+      - build-1604:
+          context: docker
+    triggers:
+      - schedule:
+          cron: "20 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
+  push-18.04:
+    jobs:
+      - build-1804:
+          context: docker
+          filters:
+            branches:
+              only:
+                - master
+  daily-18.04:
+    jobs:
+      - build-1804:
+          context: docker
+    triggers:
+      - schedule:
+          cron: "20 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
